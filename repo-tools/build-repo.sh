@@ -13,6 +13,43 @@ command -v dpkg-scanpackages >/dev/null 2>&1 || {
   exit 1
 }
 
+mkdir -p debs
+
+# ---- 1. Докачать пакеты по списку extras.txt ------------------------------
+# Формат строки:  <URL> | <имя файла>
+# Строки с # — комментарии. Скачивание идёт с серверов GitHub (не из РФ),
+# поэтому медленные/заблокированные у провайдера адреса здесь обычно качаются.
+if [ -f extras.txt ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%%#*}"
+    line="$(echo "$line" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+    [ -z "$line" ] && continue
+    url="$(echo "${line%%|*}" | sed 's/[[:space:]]*$//')"
+    name="$(echo "${line#*|}" | sed 's/^[[:space:]]*//')"
+    if [ "$name" = "$line" ] || [ -z "$name" ]; then
+      name="$(basename "$url")"
+    fi
+    if [ -f "debs/$name" ]; then
+      echo "extras: уже в репозитории — $name"
+      continue
+    fi
+    echo "extras: качаю $name"
+    if curl -fsSL --retry 5 --retry-all-errors --retry-delay 3 --max-time 300 \
+         -A "Sileo/2.5 CFNetwork/1335.0.3 Darwin/21.6.0" -o "debs/$name" "$url"; then
+      if head -c 7 "debs/$name" | grep -q '!<arch>'; then
+        echo "extras: OK $(du -h "debs/$name" | cut -f1)"
+      else
+        echo "extras: $name не является .deb — удаляю"
+        rm -f "debs/$name"
+      fi
+    else
+      echo "extras: НЕ удалось скачать $url (пропускаю, сборка продолжится)"
+      rm -f "debs/$name"
+    fi
+  done < extras.txt
+fi
+
+# ---- 2. Проверка, что есть что индексировать ------------------------------
 shopt -s nullglob
 debs=(debs/*.deb)
 if [ ${#debs[@]} -eq 0 ]; then
@@ -20,6 +57,7 @@ if [ ${#debs[@]} -eq 0 ]; then
   exit 1
 fi
 
+# ---- 3. Сборка индекса ----------------------------------------------------
 rm -rf "$OUT"
 mkdir -p "$OUT/debs"
 cp debs/*.deb "$OUT/debs/"

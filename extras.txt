@@ -1,0 +1,13 @@
+# Пакеты, которые сборщик (GitHub Actions) скачивает сам при каждой сборке.
+# Формат:   <URL> | <имя файла в debs/>
+# Скачивание идёт с серверов GitHub — там нет российской фильтрации трафика,
+# поэтому эти файлы не надо тянуть через свой медленный канал.
+#
+# RemoteCompanion — привязка жестов (в т.ч. от статус-бара) к системным
+# действиям: так Пункт управления можно открывать сверху, а не свайпом снизу.
+https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb | com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb
+https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/rootful.deb | com.saihgupr.remotecompanion_4.4.0_iphoneos-arm.deb
+
+# Morandi — тема иконок под SnowBoard (нужен установленный SnowBoard).
+https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb | com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb
+https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/Morandi_1.1.0.deb | com.rowandesign.morandi_1.1.0_iphoneos-arm.deb

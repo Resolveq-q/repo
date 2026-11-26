@@ -45,6 +45,13 @@ $items = @(
        Url  = 'https://havoc.app/api/download/package/698560276424d27e7aea436c/com.hoangdus.speedster_2.1.2_iphoneos-arm.deb'; Arch = 'arm' }
     @{ Name = 'com.hoangdus.speedster_2.1.2_iphoneos-arm64.deb';
        Url  = 'https://havoc.app/api/download/package/698560276424d27e7aea436c/com.hoangdus.speedster_2.1.2_iphoneos-arm64.deb'; Arch = 'arm64' }
+
+    # ---- RemoteCompanion: привязка жестов, в т.ч. от статус-бара -----------
+    # нужен, чтобы Пункт управления открывался сверху (жест от верхнего края)
+    @{ Name = 'com.saihgupr.remotecompanion_4.4.0_iphoneos-arm.deb';
+       Url  = 'https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/rootful.deb'; Arch = 'arm' }
+    @{ Name = 'com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb';
+       Url  = 'https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb'; Arch = 'arm64' }
 )
 
 if ($WithTheme) {
