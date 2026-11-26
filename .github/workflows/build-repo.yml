@@ -1,0 +1,56 @@
+name: Build & Deploy Repo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dpkg-dev
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq dpkg-dev
+
+      - name: Build APT index
+        env:
+          REPO_ORIGIN: "Personal Jailbreak Repo"
+          REPO_LABEL: "Personal Jailbreak Repo"
+          REPO_DESC: "Personal Sileo/Zebra source"
+        run: bash repo-tools/build-repo.sh _site
+
+      - name: Show result
+        run: |
+          echo "--- Release ---"
+          cat _site/Release
+          echo "--- Packages (first 40 lines) ---"
+          head -40 _site/Packages
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

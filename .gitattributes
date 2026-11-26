@@ -1,0 +1,5 @@
+* text=auto
+*.sh text eol=lf
+*.deb binary
+*.gz binary
+*.py text eol=lf
