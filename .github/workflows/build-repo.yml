@@ -25,6 +25,17 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq dpkg-dev
 
+      # extras.txt скачивается с серверов GitHub, но чтобы не тянуть десятки
+      # мегабайт на каждой сборке — кешируем debs/ по хешу extras.txt.
+      # Меняешь extras.txt → кеш сбрасывается и файлы скачиваются заново.
+      - name: Cache downloaded debs
+        uses: actions/cache@v4
+        with:
+          path: debs
+          key: debs-${{ hashFiles('extras.txt') }}
+          restore-keys: |
+            debs-
+
       - name: Build APT index
         env:
           REPO_ORIGIN: "Personal Jailbreak Repo"
