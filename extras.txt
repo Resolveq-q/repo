@@ -3,11 +3,36 @@
 # Скачивание идёт с серверов GitHub — там нет российской фильтрации трафика,
 # поэтому эти файлы не надо тянуть через свой медленный канал.
 #
+# ---------------------------------------------------------------- жесты ----
 # RemoteCompanion — привязка жестов (в т.ч. от статус-бара) к системным
 # действиям: так Пункт управления можно открывать сверху, а не свайпом снизу.
 https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb | com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb
 https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/rootful.deb | com.saihgupr.remotecompanion_4.4.0_iphoneos-arm.deb
 
+# ---------------------------------------------------------------- темы -----
 # Morandi — тема иконок под SnowBoard (нужен установленный SnowBoard).
 https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb | com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb
 https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/Morandi_1.1.0.deb | com.rowandesign.morandi_1.1.0_iphoneos-arm.deb
+
+# ------------------------------------------- экран блокировки (iOS 16) -----
+# AIM — «iOS 16 Style Time & Date Lockscreen»: крупные часы нового стиля
+# и дата на экране блокировки. Зависимости идут ниже.
+https://havoc.app/api/download/package/67b3534280cd05776a204930/com.ali.aim_1.3.1_iphoneos-arm64.deb | com.ali.aim_1.3.1_iphoneos-arm64.deb
+https://havoc.app/api/download/package/67b3534280cd05776a204930/com.ali.aim_1.3.1_iphoneos-arm.deb | com.ali.aim_1.3.1_iphoneos-arm.deb
+
+# Cephei (ws.hbang.common) — библиотека, нужна AIM и Linear for Status Bar
+https://repo.chariz.com/debs/5XIA5jyONeQJjgo2muE-a0slaxOTFr3FCGXMwLiYTY0xD9IH9BTe-ZJz6mnU21IGy7yuA_wSV-eoSbu-tAVGhg/ws.hbang.common_2.0_iphoneos-arm64.deb | ws.hbang.common_2.0_iphoneos-arm64.deb
+https://repo.chariz.com/debs/fev-tojl7kLfEXV3i_jIHVMRa0FwjCVkIiVrmnrkPtk84dBeqmWWcB9fvVK-iAQKr5CDXv3ilvGjyPP96X3EZg/ws.hbang.common_1.17.1_iphoneos-arm.deb | ws.hbang.common_1.17.1_iphoneos-arm.deb
+
+# libsparkcolourpicker — палитра цветов для настроек AIM
+https://sparkdev.me/download/com.spark.libsparkcolourpicker/1.0.3-rootless.deb | com.spark.libsparkcolourpicker_1.0.3-rootless_iphoneos-arm64.deb
+https://sparkdev.me/download/com.spark.libsparkcolourpicker/1.0.2.deb | com.spark.libsparkcolourpicker_1.0.2_iphoneos-arm.deb
+
+# -------------------------- минимализм: линейные иконки статус-бара -------
+# Расширение SnowBoard «StatusBar» — без него тема статус-бара не применится.
+https://sparkdev.me/download/com.spark.snowboard.statusbar/1.1.0-Beta4-rootless.deb | com.spark.snowboard.statusbar_1.1.0-Beta4-rootless_iphoneos-arm64.deb
+https://sparkdev.me/download/com.spark.snowboard.statusbar/1.0.12-Beta4.deb | com.spark.snowboard.statusbar_1.0.12-Beta4_iphoneos-arm.deb
+
+# Linear for Status Bar — иконки статус-бара в виде тонких линий (белый минимализм).
+https://repo.chariz.com/debs/K_yP8VcPLjyfUKl2RZWsgBvTtRNW2ftaafKbN4wWNJTccwc1T54gAgHyct2hUg8pYjBb_nqrVxYU15ieRT117A/com.alphastream.linearforsb_1.4.2-1_iphoneos-arm64.deb | com.alphastream.linearforsb_1.4.2-1_iphoneos-arm64.deb
+https://repo.chariz.com/debs/dKUQ1_KVNtwSadxjNLwjeKvYunJviDXs8xG3fZXDfykdNMrYeRnOm7MFWVlsceKvwXBmyB5gIj3x1zHUrpQ4Iw/com.alphastream.linearforsb_1.4.2-1_iphoneos-arm.deb | com.alphastream.linearforsb_1.4.2-1_iphoneos-arm.deb
