@@ -1,0 +1,100 @@
+name: probe tools
+on:
+  push:
+    paths:
+      - '.github/workflows/probe-tools.yml'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe repos for pentest/OSINT tooling
+        run: |
+          python3 - <<'PY'
+          import io, lzma, re, urllib.request, gzip
+
+          UA = {"User-Agent": "Sileo/2.5 CFNetwork/1335.0.3 Darwin/21.6.0"}
+
+          REPOS = [
+              "https://apt.procursus.com",
+              "https://procursus.com",
+              "https://repo.procursus.com",
+              "https://apt.procursus.org",
+              "https://ellekit.space",
+              "https://repo.chariz.com",
+              "https://havoc.app",
+              "https://repo.twickd.com",
+              "https://repo.getfile.space",
+              "https://apt.bingner.com",
+              "https://cydia.akemi.ai",
+              "https://repo.dynastic.co",
+          ]
+
+          TARGETS = ["nmap","tcpdump","netcat","netcat-openbsd","socat","whois","dnsutils",
+                     "bind9-dnsutils","python3","python3-pip","openssh","openssh-server","git",
+                     "jq","htop","exiftool","libimage-exiftool-perl","openssl","gnupg","ruby",
+                     "perl","lua5.3","masscan","sqlmap","aircrack-ng","re.frida.server",
+                     "cycript","libffi8","libssl3","zlib1g","ca-certificates"]
+
+          def get(url, timeout=45):
+              return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout).read()
+
+          def index_of(base):
+              for name in ("Packages.xz","Packages.gz","Packages.zst","Packages"):
+                  try:
+                      raw = get(f"{base.rstrip('/')}/{name}")
+                  except Exception:
+                      continue
+                  try:
+                      if name.endswith(".xz"):   return lzma.decompress(raw).decode("utf-8","replace")
+                      if name.endswith(".gz"):   return gzip.decompress(raw).decode("utf-8","replace")
+                      if name.endswith(".zst"):
+                          try:
+                              import zstandard as zstd
+                              return zstd.ZstdDecompressor().decompress(raw).decode("utf-8","replace")
+                          except Exception:
+                              continue
+                      return raw.decode("utf-8","replace")
+                  except Exception:
+                      continue
+              return None
+
+          for base in REPOS:
+              try:
+                  rel = get(f"{base.rstrip('/')}/Release", timeout=20)[:160].decode("utf-8","replace").replace("\n"," / ")
+                  print(f"### {base} -> Release OK :: {rel}")
+              except Exception as e:
+                  print(f"### {base} -> Release FAIL {type(e).__name__}")
+                  continue
+              idx = index_of(base)
+              if idx is None:
+                  print(f"    index: NOT FOUND")
+                  continue
+              entries, cur, last = [], {}, None
+              for line in idx.splitlines():
+                  if not line.strip():
+                      if cur: entries.append(cur)
+                      cur, last = {}, None
+                      continue
+                  if line[0] == " " and last:
+                      cur[last] += "\n" + line[1:]
+                      continue
+                  if ":" in line:
+                      k, v = line.split(":", 1)
+                      cur[k.strip()] = v.strip(); last = k.strip()
+              if cur: entries.append(cur)
+              print(f"    index: {len(entries)} entries, {len({e.get('Package') for e in entries})} packages")
+              by_name = {}
+              for e in entries:
+                  by_name.setdefault(e.get("Package",""), []).append(e)
+              found = []
+              for t in TARGETS:
+                  if t in by_name:
+                      for e in by_name[t]:
+                          found.append(f"{t} {e.get('Version')} {e.get('Architecture')} {e.get('Size')} {e.get('Filename')}")
+              if found:
+                  print("    MATCHES:")
+                  for f in found[:80]:
+                      print("     ", f)
+          PY
