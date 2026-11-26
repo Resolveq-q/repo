@@ -1,23 +1,29 @@
 ﻿<#
-    download-debs.ps1 — скачивает нужные .deb в папку debs/ прямо с ПК.
+    download-debs.ps1 — скачивает базовые .deb в папку debs/ прямо с ПК.
 
-    Зачем: у тебя на iPhone репозитории отдают 522 (Cloudflare), а с ПК те же
-    файлы качаются нормально. Качаем на компьютер — телефон потом берёт их
-    уже с твоего собственного GitHub-репозитория.
+    Зачем: на iPhone чужие репозитории отдают 522 (Cloudflare + фильтрация у
+    провайдера), а телефон потом берёт те же файлы уже из твоего репозитория.
 
     Запуск (из корня репозитория):
         powershell -ExecutionPolicy Bypass -File repo-tools\download-debs.ps1
-        powershell -ExecutionPolicy Bypass -File repo-tools\download-debs.ps1 -Rootful
 
     По умолчанию качаются ОБА варианта (rootful iphoneos-arm и rootless
     iphoneos-arm64) — Sileo/Zebra сами выберут нужный под твой джейлбрейк.
+
+    Устройство безопасное: файл сначала пишется как .part, проверяется и только
+    потом заменяет готовый .deb. Уже скачанные файлы не перекачиваются
+    (перекачать принудительно: -Force).
+
+    ВАЖНО: остальные пакеты (RemoteCompanion, тема Morandi) не качаются здесь —
+    они перечислены в extras.txt и их скачивает сам GitHub Actions, где нет
+    российской фильтрации трафика.
 #>
 
 [CmdletBinding()]
 param(
     [switch]$Rootful,   # только rootful (iphoneos-arm)
     [switch]$Rootless,  # только rootless (iphoneos-arm64)
-    [switch]$WithTheme  # + бесплатная тема иконок Morandi (SnowBoard), ~5.8 МБ
+    [switch]$Force      # перекачать даже то, что уже есть
 )
 
 $ErrorActionPreference = 'Stop'
@@ -45,47 +51,55 @@ $items = @(
        Url  = 'https://havoc.app/api/download/package/698560276424d27e7aea436c/com.hoangdus.speedster_2.1.2_iphoneos-arm.deb'; Arch = 'arm' }
     @{ Name = 'com.hoangdus.speedster_2.1.2_iphoneos-arm64.deb';
        Url  = 'https://havoc.app/api/download/package/698560276424d27e7aea436c/com.hoangdus.speedster_2.1.2_iphoneos-arm64.deb'; Arch = 'arm64' }
-
-    # ---- RemoteCompanion: привязка жестов, в т.ч. от статус-бара -----------
-    # нужен, чтобы Пункт управления открывался сверху (жест от верхнего края)
-    @{ Name = 'com.saihgupr.remotecompanion_4.4.0_iphoneos-arm.deb';
-       Url  = 'https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/rootful.deb'; Arch = 'arm' }
-    @{ Name = 'com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb';
-       Url  = 'https://havoc.app/api/download/package/6af9a44fcfe2bcdc1fc06e6f/com.saihgupr.remotecompanion_4.4.0_iphoneos-arm64.deb'; Arch = 'arm64' }
 )
 
-if ($WithTheme) {
-    $items += @(
-        @{ Name = 'com.rowandesign.morandi_1.1.0_iphoneos-arm.deb';
-           Url  = 'https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/Morandi_1.1.0.deb'; Arch = 'arm' }
-        @{ Name = 'com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb';
-           Url  = 'https://havoc.app/api/download/package/643fd6bf19a7b92188411a5b/com.rowandesign.morandi_1.1.0_iphoneos-arm64.deb'; Arch = 'arm64' }
-    )
+function Test-Deb([string]$path) {
+    if (-not (Test-Path $path)) { return $false }
+    if ((Get-Item $path).Length -lt 1000) { return $false }
+    $fs = [IO.File]::OpenRead($path)
+    try {
+        $buf = New-Object byte[] 8
+        $n = $fs.Read($buf, 0, 8)
+    }
+    finally { $fs.Dispose() }
+    if ($n -lt 8) { return $false }
+    return ([Text.Encoding]::ASCII.GetString($buf, 0, 7) -eq '!<arch>')
 }
 
 $wanted = @()
 if ($Rootful)  { $wanted += 'arm' }
 if ($Rootless) { $wanted += 'arm64' }
 
-$ok = 0; $fail = 0
+$ok = 0; $skip = 0; $fail = 0
 foreach ($it in $items) {
     if ($wanted -notcontains $it.Arch) { continue }
     $dest = Join-Path $debDir $it.Name
+    $part = "$dest.part"
+
+    if (-not $Force -and (Test-Deb $dest)) {
+        Write-Host ("-- {0} уже есть, пропускаю" -f $it.Name) -ForegroundColor DarkGray
+        $skip++
+        continue
+    }
+
     try {
         Write-Host ("-> {0}" -f $it.Name) -ForegroundColor Cyan
-        Invoke-WebRequest -Uri $it.Url -OutFile $dest -UseBasicParsing -TimeoutSec 120
-        $sizeKb = [math]::Round((Get-Item $dest).Length / 1KB, 1)
-        Write-Host ("   OK, {0} KB" -f $sizeKb) -ForegroundColor Green
+        if (Test-Path $part) { Remove-Item $part -Force }
+        Invoke-WebRequest -Uri $it.Url -OutFile $part -UseBasicParsing -TimeoutSec 180 `
+            -Headers @{ 'User-Agent' = 'Sileo/2.5 CFNetwork/1335.0.3 Darwin/21.6.0' }
+        if (-not (Test-Deb $part)) { throw "скачался не .deb (обрыв соединения?)" }
+        Move-Item -Force $part $dest
+        Write-Host ("   OK, {0} KB" -f [math]::Round((Get-Item $dest).Length / 1KB, 1)) -ForegroundColor Green
         $ok++
     }
     catch {
         Write-Host ("   FAIL: {0}" -f $_.Exception.Message) -ForegroundColor Red
-        if (Test-Path $dest) { Remove-Item $dest -Force }
+        if (Test-Path $part) { Remove-Item $part -Force }
         $fail++
     }
 }
 
 Write-Host ""
-Write-Host ("Скачано: {0}, с ошибками: {1}" -f $ok, $fail)
+Write-Host ("Скачано: {0}, пропущено (уже были): {1}, ошибок: {2}" -f $ok, $skip, $fail)
 Write-Host "Дальше: python repo-tools\gen-repo.py   (локальная проверка сборки индекса)"
 if ($fail -gt 0) { exit 1 }
