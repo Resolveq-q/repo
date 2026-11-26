@@ -36,3 +36,35 @@ https://sparkdev.me/download/com.spark.snowboard.statusbar/1.0.12-Beta4.deb | co
 # Linear for Status Bar — иконки статус-бара в виде тонких линий (белый минимализм).
 https://repo.chariz.com/debs/K_yP8VcPLjyfUKl2RZWsgBvTtRNW2ftaafKbN4wWNJTccwc1T54gAgHyct2hUg8pYjBb_nqrVxYU15ieRT117A/com.alphastream.linearforsb_1.4.2-1_iphoneos-arm64.deb | com.alphastream.linearforsb_1.4.2-1_iphoneos-arm64.deb
 https://repo.chariz.com/debs/dKUQ1_KVNtwSadxjNLwjeKvYunJviDXs8xG3fZXDfykdNMrYeRnOm7MFWVlsceKvwXBmyB5gIj3x1zHUrpQ4Iw/com.alphastream.linearforsb_1.4.2-1_iphoneos-arm.deb | com.alphastream.linearforsb_1.4.2-1_iphoneos-arm.deb
+
+# ------------------------------------- дополнительные часы на локскрине ----
+# NextClock — анимированные циферблаты в стиле новых iOS.
+# ⚠️ только ROOTLESS (iphoneos-arm64), 14.6 МБ. На rootful не встанет.
+https://havoc.app/api/download/package/6af7575785a5b68f6eae70b3/com.ratnik00.nextclock_1.2.0_iphoneos-arm64.deb | com.ratnik00.nextclock_1.2.0_iphoneos-arm64.deb
+
+# SimpleTime — отдельная настройка шрифта/цвета даты и времени на локскрине.
+# ⚠️ ВЫКЛЮЧЕНО: зависит от org.thebigboss.libcolorpicker, а этот пакет больше
+# нигде не хостится (BigBoss закрыт), поэтому установка упадёт с unmet dependency.
+# Включать не нужно — AIM (выше) делает то же самое. Если очень надо: найди .deb
+# libcolorpicker и раскомментируй строку.
+# https://havoc.app/api/download/package/646698c5505db43bc85e0768/com.p2kdev.simpletime_1.2.3.4_iphoneos-arm64.deb | com.p2kdev.simpletime_1.2.3.4_iphoneos-arm64.deb
+
+# --------------------------------------------- альтернативные темы иконок --
+# ZEZE — крупная бесплатная тема иконок под SnowBoard (~25 МБ на архитектуру).
+https://havoc.app/api/download/package/6215bc210824442a1c76a324/com.23aaron.zeze_1.9.1_iphoneos-arm64.deb | com.23aaron.zeze_1.9.1_iphoneos-arm64.deb
+https://havoc.app/api/download/package/6215bc210824442a1c76a324/com.23aaron.zeze_1.9.1_iphoneos-arm.deb | com.23aaron.zeze_1.9.1_iphoneos-arm.deb
+
+# Epiphany — минималистичная тема иконок под SnowBoard.
+https://havoc.app/api/download/package/6336047a09a191d41d6e9ea4/com.cyrex.epiphany_1.0.1_iphoneos-arm64.deb | com.cyrex.epiphany_1.0.1_iphoneos-arm64.deb
+https://havoc.app/api/download/package/6324e8eddd4c79058ba66a5d/Epiphany_1.0_75x256.deb | com.cyrex.epiphany_1.0_iphoneos-arm.deb
+
+# ------------------------------------------------- минимализм уведомлений --
+# Minimal — минималистичный вид уведомлений. ⚠️ только ROOTFUL (iphoneos-arm).
+# Зависимость com.mrgcgamer.libgcuniversal идёт ниже.
+https://havoc.app/api/download/package/6213a818bcfd2bb7d9094a38/me.jez.minimal_1.1.3_iphoneos-arm.deb | me.jez.minimal_1.1.3_iphoneos-arm.deb
+https://havoc.app/api/download/package/6641f0c4d885052eb5e2bf69/com.mrgcgamer.libgcuniversal_1.7.0_iphoneos-arm.deb | com.mrgcgamer.libgcuniversal_1.7.0_iphoneos-arm.deb
+https://havoc.app/api/download/package/6641f0c4d885052eb5e2bf69/com.mrgcgamer.libgcuniversal_1.7.0_iphoneos-arm64.deb | com.mrgcgamer.libgcuniversal_1.7.0_iphoneos-arm64.deb
+
+# Alderis — библиотека выбора цвета, которую используют многие твики.
+https://repo.chariz.com/debs/zaMq1kEPPeYFlPHyTiINjcFsrndIF1iCXdwzLLS35GaYZ_1e5jFYZg4IDNsVETTMkT6ryA8ehztuDTSXh4D82A/ws.hbang.alderis_1.2.3_iphoneos-arm64.deb | ws.hbang.alderis_1.2.3_iphoneos-arm64.deb
+https://repo.chariz.com/debs/n315sYEPYFNov-lgSU4f3wh3sXR4aLbtViGt61cpqeUJM3hXfoqElAoJ-V54Jsi2Z5Gq6__CJ8euVqEARZn-5Q/ws.hbang.alderis_1.2.3_iphoneos-arm.deb | ws.hbang.alderis_1.2.3_iphoneos-arm.deb
