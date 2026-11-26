@@ -98,4 +98,14 @@ done >> Release
 
 touch .nojekyll
 
+# ---- 4. Скрипты для телефона ----------------------------------------------
+# tools/*.sh публикуются как https://<pages>/repo/tools/<имя>.sh
+# Это даёт телефону источник, доступный из РФ (github.io), в отличие от многих репозиториев.
+if [ -d ../tools ]; then
+  mkdir -p tools
+  cp ../tools/*.sh tools/ 2>/dev/null || true
+  chmod +x tools/*.sh 2>/dev/null || true
+  echo "скрипты опубликованы: $(cd tools && ls | tr '\n' ' ')"
+fi
+
 echo "Готово: $OUT ($(grep -c '^Package: ' Packages) записей, архитектуры: $ARCHS)"

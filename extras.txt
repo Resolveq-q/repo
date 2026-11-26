@@ -68,3 +68,17 @@ https://havoc.app/api/download/package/6641f0c4d885052eb5e2bf69/com.mrgcgamer.li
 # Alderis — библиотека выбора цвета, которую используют многие твики.
 https://repo.chariz.com/debs/zaMq1kEPPeYFlPHyTiINjcFsrndIF1iCXdwzLLS35GaYZ_1e5jFYZg4IDNsVETTMkT6ryA8ehztuDTSXh4D82A/ws.hbang.alderis_1.2.3_iphoneos-arm64.deb | ws.hbang.alderis_1.2.3_iphoneos-arm64.deb
 https://repo.chariz.com/debs/n315sYEPYFNov-lgSU4f3wh3sXR4aLbtViGt61cpqeUJM3hXfoqElAoJ-V54Jsi2Z5Gq6__CJ8euVqEARZn-5Q/ws.hbang.alderis_1.2.3_iphoneos-arm.deb | ws.hbang.alderis_1.2.3_iphoneos-arm.deb
+
+# --------------------------------- терминал (нужен для CLI-утилит и скриптов) --
+# NewTerm 3 — терминал. Без него tune.sh / gettools.sh некуда вписать.
+# Зависимости (bash|zsh, coreutils, ncurses, system-cmds) уже есть в бутстрапе.
+https://repo.chariz.com/debs/ws.hbang.newterm3_3.0~beta1_iphoneos-arm64.deb | ws.hbang.newterm3_3.0~beta1_iphoneos-arm64.deb
+https://repo.chariz.com/debs/ws.hbang.newterm3_3.0~beta1_iphoneos-arm.deb | ws.hbang.newterm3_3.0~beta1_iphoneos-arm.deb
+
+# ---------------------- контроль инъекции твиков (скорость + стабильность) ----
+# Choicy — отключение твиков для отдельных приложений; AltList — зависимость.
+# Самая действенная «оптимизация» на джейлбрейке: меньше хуков в каждом процессе.
+https://opa334.github.io/debs/com.opa334.choicy_1.5.4-2_iphoneos-arm64.deb | com.opa334.choicy_1.5.4-2_iphoneos-arm64.deb
+https://opa334.github.io/debs/com.opa334.choicy_1.5.4-2_iphoneos-arm.deb | com.opa334.choicy_1.5.4-2_iphoneos-arm.deb
+https://opa334.github.io/debs/com.opa334.altlist_1.0.11_iphoneos-arm64.deb | com.opa334.altlist_1.0.11_iphoneos-arm64.deb
+https://opa334.github.io/debs/com.opa334.altlist_1.0.11_iphoneos-arm.deb | com.opa334.altlist_1.0.11_iphoneos-arm.deb
