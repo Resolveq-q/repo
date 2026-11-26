@@ -108,4 +108,11 @@ if [ -d ../tools ]; then
   echo "скрипты опубликованы: $(cd tools && ls | tr '\n' ' ')"
 fi
 
+# ---- 5. Документация ------------------------------------------------------
+# Чтобы читать с телефона: https://<pages>/repo/SETUP.md и /PENTEST.md
+for md in ../*.md; do
+  [ -f "$md" ] && cp "$md" "./$(basename "$md")"
+done
+echo "документация: $(ls ./*.md 2>/dev/null | wc -l | tr -d ' ') файлов"
+
 echo "Готово: $OUT ($(grep -c '^Package: ' Packages) записей, архитектуры: $ARCHS)"
