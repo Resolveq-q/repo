@@ -77,6 +77,53 @@ sh /tmp/tune.sh
 
 ## Этап 4. Установка CLI-арсенала
 
+### 4.0. Если пишет `curl: not found` (самая частая заминка)
+
+NewTerm запускается от пользователя `mobile` и видит не весь бутстрап.
+Проверь по порядку:
+
+```sh
+echo $PATH                       # есть ли /var/jb/usr/bin ?
+ls -l /var/jb/usr/bin/curl       # файл вообще существует?
+command -v curl wget apt-get
+```
+
+Дальше — по результату:
+
+**а) файл есть, но `curl` не находится** → это PATH. Лечится одной строкой:
+
+```sh
+export PATH=/var/jb/usr/bin:/var/jb/usr/sbin:/var/jb/bin:/var/jb/sbin:$PATH
+```
+
+Чтобы не повторять каждый раз, добавь в конец `~/.profile`
+(для rootless: `/var/jb/var/mobile/.profile`, создай файл, если нет) и
+перезапусти NewTerm.
+
+**б) файла `/var/jb/usr/bin/curl` нет** → стоит только curl, без остального:
+
+```sh
+apt-get update && apt-get install -y curl
+```
+
+**в) `apt-get` тоже not found** → бутстрап неполный/битый. Быстрый обход:
+
+```sh
+wget -O /tmp/gettools.sh https://resolveq-q.github.io/repo/tools/gettools.sh
+```
+
+**г) ни `curl`, ни `wget`, ни `apt`** → скачай файл напрямую из Sileo-браузера:
+
+1. открой в Safari `https://resolveq-q.github.io/repo/tools/gettools.sh`;
+2. «Поделиться» → «Сохранить в Файлы» → `On My iPhone`;
+3. в Filza (или в приложении Файлы) перенеси в `/tmp/gettools.sh`;
+4. в терминале: `sh /tmp/gettools.sh`.
+
+Вариант без интернета на телефоне: скачай скрипт на ПК и перекинь по AirDrop /
+через кабель в `/var/mobile/Documents/`, потом `sh /var/mobile/Documents/gettools.sh`.
+
+### 4.1. Сам запуск
+
 ```sh
 curl -fsSL https://resolveq-q.github.io/repo/tools/gettools.sh -o /tmp/gettools.sh
 sh /tmp/gettools.sh
@@ -112,6 +159,27 @@ C-расширения) — это нормально, скрипт печата
 которой нет, ставится рекурсивно. Поэтому **SKIP по одному пакету часто означает,
 что в твоих источниках нет вообще ни одной утилиты** — источник бутстрапа сдох
 (так умер `apt.procursus.com`). Тогда этап 5.
+
+### 4.2. Совсем без скрипта (если ничего не скачивается)
+
+Скрипт — это просто цикл по списку пакетов. Вбей его руками, `curl` не нужен:
+
+```sh
+for p in netcat-openbsd socat nmap tcpdump ngrep whois dnsutils bind9-dnsutils \
+         iproute2 procps htop git jq openssl gnupg rsync unzip zip file less \
+         nano vim tmux lsof python3 python3-pip curl wget perl \
+         libimage-exiftool-perl openssh; do
+  if apt-get install -y --no-install-recommends "$p" >/tmp/i_$p.log 2>&1; then
+    echo "OK   $p"
+  else
+    echo "--   $p (нет в источниках или ошибка, лог /tmp/i_$p.log)"
+  fi
+done
+command -v nmap tcpdump dig whois python3 git jq exiftool ssh
+```
+
+Строки `--` означают ровно то же, что `SKIP` в скрипте: пакета нет в твоих
+источниках. Если `--` почти на всё — переходи к этапу 5 (iSH).
 
 ## Этап 5. Если SKIP много — iSH из App Store
 
